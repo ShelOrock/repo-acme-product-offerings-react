@@ -1,0 +1,10 @@
+//   const Companies = () => <p>companies</p>;
+			                    //            const Products = () => <p> products </p>;
+			                               const Nav = () => {
+			                                   return (
+			                                       <nav>
+			                                         <Link to= "/companies">Companies</Link>
+			                                         <Link to= "/products">Products</Link>
+			                                     </nav>
+			                                   )
+			                               }

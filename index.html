@@ -15,8 +15,101 @@
 			crossorigin
 		></script>
 		<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.1.2/react-router-dom.js"></script>
 	</head>
 	<body>
-		<script type="text/babel"></script>
+		<div id="root"></div>
+		<script type="text/babel">
+			let root = document.getElementById("root");
+
+			const Companies = (props) => {
+				console.log(props);
+				return <p>companies</p>;
+			};
+			const Products = () => <p> products </p>;
+			const Nav = () => {
+				return (
+					<nav>
+						<Link to="/companies">Companies</Link>
+						<Link to="/products">Products</Link>
+					</nav>
+				);
+			};
+
+			function getData(products, companies, offerings) {
+				let combineData = companies
+					.map((el) => {
+						return {
+							id: el.id,
+							offering: offerings
+								.filter((offering) => offering.companyId === el.id)
+								.map((el) => {
+									return {
+										price: el.price,
+										productName: products.find(
+											(product) => product.id === el.productId
+										).name
+									};
+								}),
+							name: el.name,
+							catchPhrase: el.catchPhrase
+						};
+					})
+					.filter((company) => {
+						return company;
+					});
+
+				return combineData;
+			}
+
+			let { Component } = React;
+			let { render } = ReactDOM;
+			let { HashRouter, Link, Route } = ReactRouterDOM;
+
+			class App extends Component {
+				constructor() {
+					super();
+					this.state = {
+						products: [],
+						companies: [],
+						view: null
+					};
+				}
+
+				/*
+			                https://acme-users-api-rev.herokuapp.com/api/products
+
+			https://acme-users-api-rev.herokuapp.com/api/companies
+			https://acme-users-api-rev.herokuapp.com/api/offerings
+			                */
+				componentDidMount() {
+					Promise.all([
+						fetch("https://acme-users-api-rev.herokuapp.com/api/products"),
+						fetch("https://acme-users-api-rev.herokuapp.com/api/companies"),
+						fetch("https://acme-users-api-rev.herokuapp.com/api/offerings")
+					]).then((response) => {
+						return Promise.all(response.map((el) => el.json())).then((data) => {
+							let [products, companies, offerings] = data;
+
+							this.setState({
+								companies: getData(products, companies, offerings)
+							});
+						});
+					});
+				}
+
+				render() {
+					return (
+						<HashRouter>
+							<Route component={Nav} />
+							<Route path="/companies" render={()=>} />
+							<Route path="/products" component={Products} />
+							<div>hello World </div>
+						</HashRouter>
+					);
+				}
+			}
+			render(<App />, root);
+		</script>
 	</body>
 </html>
