@@ -20,12 +20,12 @@
 	<body>
 		<div id="root"></div>
 		<script type="text/babel">
-			let root = document.getElementById("root");
+			const root = document.querySelector("#root");
 
 			const Companies = (props) => {
-				console.log(props);
 				return <p>companies</p>;
 			};
+			
 			const Products = () => <p> products </p>;
 			const Nav = () => {
 				return (
@@ -76,12 +76,6 @@
 					};
 				}
 
-				/*
-			                https://acme-users-api-rev.herokuapp.com/api/products
-
-			https://acme-users-api-rev.herokuapp.com/api/companies
-			https://acme-users-api-rev.herokuapp.com/api/offerings
-			                */
 				componentDidMount() {
 					Promise.all([
 						fetch("https://acme-users-api-rev.herokuapp.com/api/products"),
