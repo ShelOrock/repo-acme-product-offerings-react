@@ -30,6 +30,14 @@
 			background-color: palevioletred;
 		}
 
+		ul {
+			list-style-type: none;
+		}
+
+		#root > ul > li {
+			padding-bottom: 2rem;
+		}
+
 	</style>
 	<head>
 		<title>Acme Product Offerings</title>
@@ -117,13 +125,13 @@
 				}
 			};
 
-			const Nav = ( { companies, products, view }) => {
-			console.log('view:', view)
+			const Nav = ( { companies, products, props }) => {
+				const path = props.location.pathname;
 				return (
 					<nav>
 						<h1>ACME OFFERINGS *REACT</h1>
-						<Link to="/companies" className={ view === 'companies' ? 'selected' : ''}>Companies ({ companies.length })</Link>
-						<Link to="/products" className={ view === 'products' ? 'selected' : ''}>Products ({ products.length })</Link>
+						<Link to="/companies" className={ path === '/companies' ? 'selected' : ''}>Companies ({ companies.length })</Link>
+						<Link to="/products" className={ path === '/products' ? 'selected' : ''}>Products ({ products.length })</Link>
 					</nav>
 				);
 			};
@@ -169,12 +177,10 @@
 					this.state = {
 						products: [],
 						companies: [],
-						view: null
 					};
 				}
 
 				componentDidMount() {
-				const { view } = this.state
 					Promise.all([
 						axios.get("https://acme-users-api-rev.herokuapp.com/api/products"),
 						axios.get("https://acme-users-api-rev.herokuapp.com/api/companies"),
@@ -184,18 +190,17 @@
 						const [products, companies, offerings] = data;
 						this.setState({
 							products: combineProductData( products, companies, offerings ),
-							companies: combineCompanyData( products, companies, offerings ),
-							view })
+							companies: combineCompanyData( products, companies, offerings )
+						})
 					})
 				}
 
 
 				render() {
-					const { companies, products, view } = this.state;
-					console.log('companies list:', companies, 'product list:', products);
+					const { companies, products } = this.state;
 					return (
 						<HashRouter>
-							<Route render={() => <Nav companies={ companies } products={ products } view={ view }/> } />
+							<Route render={(props) => <Nav companies={ companies } products={ products } props={ props } /> } />
 							<Switch>
 								<Route path="/companies" render={() => <Companies companies={ companies } /> } />
 								<Route path="/products" render={() => <Products products={ products } /> } />
